@@ -73,7 +73,7 @@ func ConvertImages(w http.ResponseWriter, r *http.Request) {
 	name := header.Filename[:len(header.Filename)-len(ext)]
 
 	// ! name_image_converted.jpg
-	fileName := name + "_converted" + "." + typeValue
+	fileName := name + "." + typeValue
 
 	// ! CONVERTING IMAGE
 	switch typeValue {
