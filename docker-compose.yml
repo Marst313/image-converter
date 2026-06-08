@@ -1,5 +1,6 @@
 services:
   app:
+    platform: linux/amd64
     image: marst313/image-converter:latest
 
     container_name: image-converter
