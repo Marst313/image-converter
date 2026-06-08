@@ -6,7 +6,7 @@ services:
 
     container_name: image-converter
     ports:
-      - "3001:3001"
+      - "3001"
 
     restart: unless-stopped
     env_file:
