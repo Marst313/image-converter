@@ -1,6 +1,6 @@
 services:
   app:
-    image: marst/image-converter:latest
+    image: marst313/image-converter:latest
 
     container_name: image-converter
 
