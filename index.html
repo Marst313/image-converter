@@ -1,0 +1,190 @@
+<body>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 400px;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #fileName {
+      margin-top: 8px;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+
+  <div class="container">
+    <h1>🖼 Image Converter</h1>
+    <p>Upload gambar dan pilih format tujuan.</p>
+
+    <div class="form-group">
+      <label>Pilih Gambar</label>
+      <input type="file" accept="image/*" id="imageInput" />
+      <div id="fileName">Belum ada file dipilih</div>
+    </div>
+
+    <div class="form-group">
+      <label>Format Output</label>
+      <select id="type">
+        <option value="png">PNG</option>
+        <option value="jpg">JPG</option>
+        <option value="webp">WEBP</option>
+      </select>
+    </div>
+
+    <button id="convertBtn">Convert Image</button>
+  </div>
+
+  <script>
+    const imageInput = document.getElementById("imageInput");
+    const fileName = document.getElementById("fileName");
+
+    imageInput.addEventListener("change", () => {
+      if (imageInput.files.length > 0) {
+        fileName.textContent = imageInput.files[0].name;
+      } else {
+        fileName.textContent = "Belum ada file dipilih";
+      }
+    });
+
+    const button = document.getElementById("convertBtn");
+
+    button.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("imageInput");
+
+      const file = input.files[0];
+
+      if (!file) {
+        alert("Please select image first");
+        return;
+      }
+
+      const formData = new FormData();
+
+      formData.append("image", file);
+      formData.append("type", document.getElementById("type").value);
+
+      try {
+        button.disabled = true;
+        button.textContent = "Converting...";
+
+        const response = await fetch("http://localhost:3001/convert/image", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          alert("Failed convert image");
+          return;
+        }
+
+        const blob = await response.blob();
+
+        const disposition = response.headers.get("Content-Disposition");
+
+        let filename = "downloaded-image";
+
+        if (disposition) {
+          const match = disposition.match(/filename="(.+)"/);
+
+          if (match) {
+            filename = match[1];
+          }
+        }
+
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = filename;
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Convert Image";
+      }
+    });
+  </script>
+</body>
