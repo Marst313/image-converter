@@ -1,13 +1,13 @@
 services:
-  image-converter:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    image: marst/image-converter:latest
 
     container_name: image-converter
-    ports:
-      - "3001"
 
     restart: unless-stopped
+
+    ports:
+      - "127.0.0.1:3001:3001"
+
     env_file:
       - .env
