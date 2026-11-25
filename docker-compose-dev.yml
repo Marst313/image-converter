@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+
+    ports:
+      - "3001:3001"
+
+    volumes:
+      - .:/app
+
+    env_file:
+      - .env
